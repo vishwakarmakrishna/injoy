@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:injoy/mypath/mypaths.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import 'package:vrouter/vrouter.dart';
 
@@ -18,7 +19,7 @@ class _SplScreenState extends State<SplScreen> {
     super.initState();
 
     Timer(
-      const Duration(seconds: 1),
+      const Duration(seconds: 2),
       () {
         context.vRouter.to(MyPath.homeKrPath);
       },
@@ -27,13 +28,29 @@ class _SplScreenState extends State<SplScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: const Center(
-        child: Icon(
-          Icons.movie,
-          size: 200,
-          color: Colors.red,
+    return Material(
+      color: Colors.black,
+      child: Center(
+        child: Container(
+          alignment: Alignment.center,
+          height: context.screenHeight,
+          width: context.screenWidth,
+          decoration: BoxDecoration(
+            color: Vx.purple900,
+            // borderRadius: BorderRadius.circular(1000),
+            boxShadow: [
+              BoxShadow(
+                color: Vx.pink600.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 15,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.movie,
+            size: context.screenWidth * 0.45,
+          ),
         ),
       ),
     );

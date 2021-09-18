@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:injoy/mypath/mypaths.dart';
+import 'package:injoy/screen/poster/fullpostermain.dart';
+import 'package:injoy/widgets/bookmark/bookmarkscreen.dart';
+import 'package:injoy/widgets/menu/menuscreen.dart';
 
-import 'package:injoy/screen/mymain.dart';
+import 'package:injoy/widgets/mymain.dart';
 import 'package:injoy/screen/mysplscreen.dart';
+import 'package:injoy/widgets/newmain.dart';
+import 'package:injoy/widgets/starscreen/starscreen.dart';
 import 'package:vrouter/vrouter.dart';
 
 void main() {
@@ -32,10 +37,16 @@ class _MyAppState extends State<MyApp> {
       mode: VRouterMode.history,
       debugShowCheckedModeBanner: false,
       initialUrl: MyPath.splashKrPath,
+      transitionDuration: const Duration(seconds: 1),
+      buildTransition: (animation1, _, child) =>
+          FadeTransition(opacity: animation1, child: child),
       routes: [
         VWidget(
           path: MyPath.splashKrPath,
           widget: const SplScreen(),
+          transitionDuration: const Duration(seconds: 1),
+          buildTransition: (animation1, _, child) =>
+              FadeTransition(opacity: animation1, child: child),
         ),
         // VGuard(
         //   beforeEnter: (vRedirector) async =>
@@ -45,8 +56,45 @@ class _MyAppState extends State<MyApp> {
         // VRouteRedirector(path: ':_(.+)', redirectTo: '/home'),
         VWidget(
           path: MyPath.homeKrPath,
-          aliases: const ['/Home', '/HOME', '/Main', '/MAIN'],
           widget: const HomePage(),
+          transitionDuration: const Duration(seconds: 1),
+          buildTransition: (animation1, _, child) =>
+              FadeTransition(opacity: animation1, child: child),
+        ),
+        VWidget(
+          path: MyPath.newhomeKrPath,
+          widget: const NewMainHomeScreen(),
+          transitionDuration: const Duration(seconds: 1),
+          buildTransition: (animation1, _, child) =>
+              FadeTransition(opacity: animation1, child: child),
+        ),
+        VWidget(
+          path: '/home/star',
+          widget: const StarPage(),
+          transitionDuration: const Duration(milliseconds: 1),
+          buildTransition: (animation1, _, child) =>
+              FadeTransition(opacity: animation1, child: child),
+        ),
+        VWidget(
+          path: '/home/bookmark',
+          widget: const BookmarkPage(),
+          transitionDuration: const Duration(milliseconds: 1),
+          buildTransition: (animation1, _, child) =>
+              FadeTransition(opacity: animation1, child: child),
+        ),
+        VWidget(
+          path: '/home/menu',
+          widget: const MenuPage(),
+          transitionDuration: const Duration(milliseconds: 1),
+          buildTransition: (animation1, _, child) =>
+              FadeTransition(opacity: animation1, child: child),
+        ),
+        VWidget(
+          path: '/home/:index',
+          widget: const FullPosterMain(),
+          transitionDuration: const Duration(milliseconds: 1),
+          buildTransition: (animation1, _, child) =>
+              FadeTransition(opacity: animation1, child: child),
         ),
       ],
     );

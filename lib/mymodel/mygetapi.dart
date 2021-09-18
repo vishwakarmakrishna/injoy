@@ -1,81 +1,85 @@
-import 'dart:async';
+// To parse this JSON data, do
+//
+//     final myCustRestapi = myCustRestapiFromJson(jsonString);
+
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
-import 'package:http/http.dart' as http;
+MyCustRestapi myCustRestapiFromJson(String str) =>
+    MyCustRestapi.fromJson(json.decode(str));
 
-class PosterList extends StatelessWidget {
-  // ignore: use_key_in_widget_constructors
-  const PosterList({required this.mygetapi});
+String myCustRestapiToJson(MyCustRestapi data) => json.encode(data.toJson());
 
-  final List<MyGetApi> mygetapi;
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      itemCount: mygetapi.length,
-      itemBuilder: (context, index) {
-        return Image.network(mygetapi[index].poster);
-        // return Text(mygetapi[index].imdbID);
-      },
-    );
-  }
-}
-
-Future<List<MyGetApi>> fetchMyGetApi(http.Client client) async {
-  final response = await client.get(Uri.http(
-      'http://www.omdbapi.com/', '?i=tt3896198&apikey=c4033450&s=Movies/'));
-
-  // Use the compute function to run parsePhotos in a separate isolate.
-  return compute(parseMyGetApi, response.body);
-}
-
-// A function that converts a response body into a List<Photo>.
-List<MyGetApi> parseMyGetApi(String responseBody) {
-  final parsedMyGetApi = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
-  return parsedMyGetApi
-      .map<MyGetApi>((json) => MyGetApi.fromJson(json))
-      .toList();
-}
-
-class MyGetApi {
-  final String search;
-  final String title;
-  final String year;
-  final String imdbID;
-  final String type;
-  final String poster;
-
-  MyGetApi({
-    required this.search,
-    required this.title,
-    required this.year,
-    required this.imdbID,
-    required this.type,
-    required this.poster,
+class MyCustRestapi {
+  MyCustRestapi({
+    this.search,
+    this.totalResults,
+    this.response,
   });
 
-  factory MyGetApi.fromJson(Map<String, dynamic> map) {
-    return MyGetApi(
-        search: map['Search'] as String,
-        title: map['Title'] as String,
-        year: map['Year'] as String,
-        imdbID: map['imdbID'] as String,
-        type: map['Type'] as String,
-        poster: map['Poster'] as String);
-  }
+  List<Search>? search;
+  String? totalResults;
+  String? response;
+
+  factory MyCustRestapi.fromJson(Map<String, dynamic> json) => MyCustRestapi(
+        search:
+            List<Search>.from(json["Search"].map((x) => Search.fromJson(x))),
+        totalResults: json["totalResults"],
+        response: json["Response"],
+      );
 
   Map<String, dynamic> toJson() => {
-        'Search': search,
-        'Title': title,
-        'Year': year,
-        'imdbID': imdbID,
-        'Type': type,
-        'Poster': poster,
+        "Search": List<dynamic>.from(search!.map((x) => x.toJson())),
+        "totalResults": totalResults,
+        "Response": response,
       };
+}
+
+class Search {
+  Search({
+    this.title,
+    this.year,
+    this.imdbId,
+    this.type,
+    this.poster,
+  });
+
+  String? title;
+  String? year;
+  String? imdbId;
+  Type? type;
+  String? poster;
+
+  factory Search.fromJson(Map<String, dynamic> json) => Search(
+        title: json["Title"],
+        year: json["Year"],
+        imdbId: json["imdbID"],
+        type: typeValues.map![json["Type"]],
+        poster: json["Poster"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Title": title,
+        "Year": year,
+        "imdbID": imdbId,
+        "Type": typeValues.reverse![type],
+        "Poster": poster,
+      };
+}
+
+enum Type { MOVIE, SERIES }
+
+final typeValues = EnumValues({"movie": Type.MOVIE, "series": Type.SERIES});
+
+class EnumValues<T> {
+  Map<String, T>? map;
+  Map<T, String>? reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String>? get reverse {
+    if (reverseMap == null) {
+      reverseMap = map!.map((k, v) => new MapEntry(v, k));
+    }
+    return reverseMap;
+  }
 }
